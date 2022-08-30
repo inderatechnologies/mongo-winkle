@@ -12,6 +12,7 @@ module.exports = async function(username, password, mongo_uri, cluster, collecti
     if (!username || !password || !username && !password) {
         reject(false)
     } else {
+        
     return new Promise((resolve, reject)=>{
         MongoClient.connect(mongo_uri, async function(err, db) {
                 if (err) {
