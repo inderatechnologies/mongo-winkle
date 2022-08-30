@@ -3,7 +3,6 @@ let uri = ''
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
-
 module.exports = async function(username, password, mongo_uri, cluster, collection) {
     
     let client = new MongoClient(mongo_uri)
