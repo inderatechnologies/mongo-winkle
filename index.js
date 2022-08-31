@@ -78,31 +78,3 @@ module.exports.login = async function(username, password, mongo_uri, cluster, co
             })
         })
     }
-
-
-    // const database = client.db("Cluster0");
-    // const people = database.collection("people");
-
-    // let registerDetails = req.body
-
-    // registerDetails.first_name = registerDetails.first_name.charAt(0).toUpperCase() + registerDetails.first_name.slice(1);
-    // registerDetails.last_name = registerDetails.last_name.charAt(0).toUpperCase() + registerDetails.last_name.slice(1);
-
-    // registerDetails.admin = JSON.parse(registerDetails.admin)
-
-    // bcrypt.hash(registerDetails.password, saltRounds, function(err, hash) {
-    //     registerDetails.password = hash
-    //     MongoClient.connect(uri, async function(err, db) {
-    //         if (err) throw err;
-    //         people.find({'email': registerDetails.email}).toArray(async function(e,doc){
-    //             if(doc.length === 0) {
-    //                 await people.insertOne(registerDetails)
-    //                 res.redirect('/pages');
-    //             } else {
-    //                 res.send("account already exists!");
-    //                 return
-    //             }
-    //             db.close();
-    //         });
-    //     })
-    // })
