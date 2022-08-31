@@ -3,7 +3,7 @@ let uri = ''
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
-module.exports = async function(username, password, mongo_uri, cluster, collection) {
+module.exports.login = async function(username, password, mongo_uri, cluster, collection) {
     
     let client = new MongoClient(mongo_uri)
     let database = client.db(cluster)
@@ -12,7 +12,6 @@ module.exports = async function(username, password, mongo_uri, cluster, collecti
     if (!username || !password || !username && !password) {
         reject(false)
     } else {
-        
     return new Promise((resolve, reject)=>{
         MongoClient.connect(mongo_uri, async function(err, db) {
                 if (err) {
@@ -20,12 +19,11 @@ module.exports = async function(username, password, mongo_uri, cluster, collecti
                     reject(false)
                 }
                 
-                collection_name.find({'username': username}).toArray(async function(e,doc){
+                collection_name.find({'email': username}).toArray(async function(e,doc){
                     if(doc.length === 0) {
                         resolve(false)
                         db.close();
                     } else {
-
                     let hashed_pw = ""
                     for (var i = 0; i < doc.length; i++) {
                         hashed_pw = doc[i].password
@@ -44,3 +42,67 @@ module.exports = async function(username, password, mongo_uri, cluster, collecti
         })
     }
  } 
+
+
+ module.exports.register = async function(mongo_uri, cluster, collection, data) {
+
+    let client = new MongoClient(mongo_uri)
+    let database = client.db(cluster)
+    let collection_name = database.collection(collection)
+
+    if (data.email) {
+        username = data.email
+    }
+
+        return new Promise((resolve, reject)=>{
+            MongoClient.connect(mongo_uri, async function(err, db) {
+                    if (err) {
+                        console.log(err);
+                        reject(false)
+                    }
+                    
+                    collection_name.find({'username': username}).toArray(async function(e,doc){
+                        if(doc.length > 0) {
+                            resolve(false)
+                            db.close();
+                        } else {
+                            let doc = data
+                            bcrypt.hash(doc.password, saltRounds, function(err, hash) {
+                                doc.password = hash
+                                collection_name.insertOne(doc)
+                                resolve(true)
+                            })
+                            db.close();
+                        }
+                    })
+            })
+        })
+    }
+
+
+    // const database = client.db("Cluster0");
+    // const people = database.collection("people");
+
+    // let registerDetails = req.body
+
+    // registerDetails.first_name = registerDetails.first_name.charAt(0).toUpperCase() + registerDetails.first_name.slice(1);
+    // registerDetails.last_name = registerDetails.last_name.charAt(0).toUpperCase() + registerDetails.last_name.slice(1);
+
+    // registerDetails.admin = JSON.parse(registerDetails.admin)
+
+    // bcrypt.hash(registerDetails.password, saltRounds, function(err, hash) {
+    //     registerDetails.password = hash
+    //     MongoClient.connect(uri, async function(err, db) {
+    //         if (err) throw err;
+    //         people.find({'email': registerDetails.email}).toArray(async function(e,doc){
+    //             if(doc.length === 0) {
+    //                 await people.insertOne(registerDetails)
+    //                 res.redirect('/pages');
+    //             } else {
+    //                 res.send("account already exists!");
+    //                 return
+    //             }
+    //             db.close();
+    //         });
+    //     })
+    // })
